@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as categoryActions from "../../redux/actions/categoryActions";
-import { ListGroup, ListGroupItem } from "reactstrap";
+import { Badge, ListGroup, ListGroupItem } from "reactstrap";
 
 class CategoryList extends Component {
   componentDidMount() {
@@ -12,12 +12,18 @@ class CategoryList extends Component {
     console.log(this.props);
     return (
       <div>
-        <h1>CategoryList</h1>
-        <h5>Seçili kategori: {this.props.currentCategory.categoryName}</h5>
-
+        <h2>
+          <Badge color="warning">Categories</Badge>
+        </h2>
         <ListGroup>
           {this.props.categories.map((category) => (
-            <ListGroupItem key={category.id}>{category.categoryName}</ListGroupItem>
+            <ListGroupItem
+              active={category.id === this.props.currentCategory.id}
+              onClick={() => this.props.actions.changeCategory(category)}
+              key={category.id}
+            >
+              {category.categoryName}
+            </ListGroupItem>
           ))}
         </ListGroup>
       </div>
@@ -28,7 +34,14 @@ class CategoryList extends Component {
 function mapDispatchToProps(dispatch) {
   return {
     actions: {
-      getCategories: bindActionCreators(categoryActions.getCategories, dispatch),
+      getCategories: bindActionCreators(
+        categoryActions.getCategories,
+        dispatch
+      ),
+      changeCategory: bindActionCreators(
+        categoryActions.changeCategory,
+        dispatch
+      ),
     },
   };
 }
