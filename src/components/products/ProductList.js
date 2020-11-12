@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as productActions from "../../redux/actions/productActions";
+import * as cartActions from "../../redux/actions/cartActions";
+import alertify from "alertifyjs";
+
 import {
   Badge,
   Card,
@@ -13,11 +16,19 @@ import {
   Button,
   Col,
   Row,
+  CardFooter,
 } from "reactstrap";
+
 class ProductList extends Component {
   componentDidMount() {
     this.props.actions.getProducts();
   }
+
+  addToCart = (product) => {
+    this.props.actions.addToCart({ quantity: 1, product });
+    alertify.success("Sepete Eklendi");
+  };
+
   render() {
     return (
       <div>
@@ -29,8 +40,11 @@ class ProductList extends Component {
         </h3>
         <Row>
           {this.props.products.map((product) => (
-            <Col >
-              <Card key={product.id}>
+            <Col key={product.id}>
+              <Card
+                className="mb-5"
+                style={{ height: "450px", width: "180px" }}
+              >
                 <CardImg
                   top
                   width="100%"
@@ -47,6 +61,14 @@ class ProductList extends Component {
                     Stock - {product.unitsInStock}
                   </CardSubtitle>
                 </CardBody>
+                <CardFooter>
+                  <Button
+                    color="success"
+                    onClick={() => this.addToCart(product)}
+                  >
+                    Ekle
+                  </Button>
+                </CardFooter>
               </Card>
             </Col>
           ))}
@@ -60,6 +82,7 @@ function mapDispatchToProps(dispatch) {
   return {
     actions: {
       getProducts: bindActionCreators(productActions.getProducts, dispatch),
+      addToCart: bindActionCreators(cartActions.addToCart, dispatch),
     },
   };
 }
