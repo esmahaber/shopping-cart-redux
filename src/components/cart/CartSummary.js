@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as cartActions from "../../redux/actions/cartActions";
 import {
   UncontrolledDropdown,
   DropdownToggle,
@@ -30,6 +32,14 @@ class CartSummary extends Component {
             <DropdownItem key={cartItem.product.id}>
               {cartItem.product.productName}
               <Badge color="warning">{cartItem.quantity}</Badge>
+              <Badge
+                color="danger"
+                onClick={() =>
+                  this.props.actions.removeFromCart(cartItem.product)
+                }
+              >
+              -
+              </Badge>
             </DropdownItem>
           ))}
           <DropdownItem divider />
@@ -48,10 +58,18 @@ class CartSummary extends Component {
   }
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: {
+      removeFromCart: bindActionCreators(cartActions.removeFromCart, dispatch),
+    },
+  };
+}
+
 function mapStateToProps(state) {
   return {
     cart: state.cartReducer,
   };
 }
 
-export default connect(mapStateToProps)(CartSummary);
+export default connect(mapStateToProps, mapDispatchToProps)(CartSummary);
